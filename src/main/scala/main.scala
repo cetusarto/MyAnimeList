@@ -3,6 +3,7 @@
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
 
+
 object main extends App {
     val spark = SparkSession.builder()
       .appName("Data Sources and Formats")
