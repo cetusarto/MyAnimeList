@@ -1,4 +1,4 @@
-package First_Cleansing
+package Data_Preparation
 
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
@@ -10,10 +10,8 @@ import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
 object UnifyingDataset extends App {
   val spark = SparkSession.builder()
-    .appName("Cleansing and creating format")
+    .appName("Unifying Dataset")
     .config("spark.master", "local")
-    .config("spark.executor.memory", "2g")
-    .config("spark.executor.cores", "5")
     .config("spark.sql.shuffle.partitions", "5")
     .getOrCreate()
 
