@@ -2,32 +2,19 @@ package Data_Preparation
 
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
+import Helper.Helper
+
 
 /**
  * Unifies all 69 csv files in one big parquet file for faster reading
-**/
+ * */
 
 
 object UnifyingDataset extends App {
-  val spark = SparkSession.builder()
-    .appName("Unifying Dataset")
-    .config("spark.master", "local")
-    .config("spark.sql.shuffle.partitions", "5")
-    .getOrCreate()
 
+  val spark = Helper.getSparkSession
+  def getUser_AnimeDF(edition: String) = Helper.readCSV(spark, s"user_anime0000000000$edition.csv")
 
-
-  //Returns a user_anime DF
-  def getUser_AnimeDF(edition: String) = {
-    spark.read
-      .format("csv").options(Map(
-      "mode" -> "failFast",
-      "inferSchema" -> "true",
-      "sep" -> "\t",
-      "header" -> "true",
-      "path" -> s"src/main/resources/data/user_anime0000000000$edition.csv"
-    )).load()
-  }
 
   //Create an array of dataframes
   var DFArray = collection.mutable.ArrayBuffer.empty[DataFrame]

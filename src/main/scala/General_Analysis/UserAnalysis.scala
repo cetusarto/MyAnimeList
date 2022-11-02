@@ -1,25 +1,12 @@
 package General_Analysis
 
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions._
+import Helper.Helper
 
 object UserAnalysis extends App {
 
-  val spark = SparkSession.builder()
-    .appName("User Analysis")
-    .config("spark.master", "local")
-    .config("spark.sql.shuffle.partitions", "5")
-    .getOrCreate()
+  val spark = Helper.getSparkSession
 
-  val userDF = spark.read
-    .format("csv")
-    .options(Map(
-      "sep" -> "\t",
-      "mode" -> "failFast",
-      "inferSchema" -> "true",
-      "header" -> "true",
-      "path" -> "src/main/resources/data/user.csv"
-    )).load()
+  val userDF = Helper.readParquet(spark,"user.parquet")
 
   //Average and STDs of users
   userDF.selectExpr("avg(mean_score) as mean_score", "std(mean_score) as std_score",

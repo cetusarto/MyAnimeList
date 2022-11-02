@@ -1,22 +1,12 @@
 package General_Analysis
 
+import Helper.Helper
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
 
 object UserAnimeAnalysis extends App {
-  val spark = SparkSession.builder()
-    .appName("User-Anime Analysis")
-    .config("spark.master", "local")
-    .config("spark.sql.shuffle.partitions", "5")
-    .getOrCreate()
-
-  val user_animeDF = spark.read
-    .options(Map(
-      "mode" -> "failFast",
-      "inferSchema" -> "true",
-      "header" -> "true",
-      "path" -> "src/main/resources/data/user_anime.parquet"
-    )).load()
+  val spark = Helper.getSparkSession
+  val user_animeDF = Helper.readParquet(spark,"user_anime.parquet")
 
   val fullCount = user_animeDF.count()
   val nonReviewCount = user_animeDF.where(col("review_id").isNull).count()
