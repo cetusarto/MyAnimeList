@@ -12,7 +12,7 @@ import Helper.Helper
 
 object UnifyingDataset extends App {
 
-  val spark = Helper.getSparkSession
+  val spark = Helper.getSparkSession()
   def getUser_AnimeDF(edition: String) = Helper.readCSV(spark, s"user_anime0000000000$edition.csv")
 
 
