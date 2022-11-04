@@ -1,11 +1,11 @@
 package General_Analysis
 
-import Helper.Helper
+import Helper._
 import org.apache.spark.sql.functions._
 
 object UserAnimeAnalysis extends App {
   val spark = Helper.getSparkSession("UserAnimeAnalysis")
-  val user_animeDF = Helper.readParquet(spark, "user_anime.parquet")
+  val user_animeDF = Helper.readParquetSchema(spark, "user_anime.parquet",SchemaHelper.getUserAnimeSchema)
 
   val fullCount = user_animeDF.count()
   val scoredCount = user_animeDF.where(col("score").isNotNull).count()
@@ -39,6 +39,15 @@ object UserAnimeAnalysis extends App {
       "std(score) as std_score",
       "avg(review_score) as avg_review_score",
       "std(review_score) as std_review_score",
+    ).show()
+
+  user_animeDF
+    .where(col("review_score").isNotNull)
+    .selectExpr(
+      "avg(score) as avg_score",
+      "std(score) as std_score",
+      "avg(review_score) as avg_review_score",
+      "std(review_score) as std_review_score"
     ).show()
 
   user_animeDF

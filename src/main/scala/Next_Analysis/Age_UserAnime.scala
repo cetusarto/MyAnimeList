@@ -1,6 +1,6 @@
 package Next_Analysis
 
-import Helper.Helper
+import Helper._
 import org.apache.spark.sql.SaveMode
 import org.apache.spark.sql.functions._
 
@@ -8,11 +8,11 @@ object Age_UserAnime extends App {
   val spark = Helper.getSparkSession("Third question")
 
 
-  val user_animeDF = Helper.readParquet(spark, "user_anime.parquet")
+  val user_animeDF = Helper.readParquetSchema(spark, "user_anime.parquet",SchemaHelper.getUserAnimeSchema)
     .select("anime_id", "favorite", "review_score", "score", "review_id", "review_num_useful")
     .where(col("score").isNotNull or col("review_id").isNotNull)
 
-  val animeAgeDF = Helper.readParquet(spark, "anime.parquet")
+  val animeAgeDF = Helper.readParquetSchema(spark, "anime.parquet",SchemaHelper.getAnimeSchema)
     .select("anime_id", "start_date","end_date")
     .withColumn("start_year", substring(col("start_date"), 1, 4))
     .withColumn("end_year", substring(col("end_date"), 1, 4))

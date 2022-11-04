@@ -1,12 +1,12 @@
 package General_Analysis
 
-import Helper.Helper
+import Helper._
 
 object UserAnalysis extends App {
 
   val spark = Helper.getSparkSession("UserAnalysis")
 
-  val userDF = Helper.readParquet(spark,"user.parquet")
+  val userDF = Helper.readParquetSchema(spark,"user.parquet",SchemaHelper.getUserSchema)
 
   //Average and STDs of users
 

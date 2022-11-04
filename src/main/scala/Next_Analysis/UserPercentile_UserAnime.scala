@@ -1,6 +1,6 @@
 package Next_Analysis
 
-import Helper.Helper
+import Helper._
 import org.apache.spark.sql.SaveMode
 import org.apache.spark.sql.functions._
 
@@ -8,7 +8,7 @@ object UserPercentile_UserAnime extends App {
   val spark = Helper.getSparkSession("First question")
 
   //val user_animeDF = Helper.readParquet(spark,"user_anime.parquet")
-  val userDF = Helper.readParquet(spark, "user.parquet")
+  val userDF = Helper.readParquetSchema(spark, "user.parquet",SchemaHelper.getUserSchema)
 
 
   /**
@@ -42,7 +42,7 @@ object UserPercentile_UserAnime extends App {
 
 
   val userPercentileDF = Helper.readParquet(spark, "userPercentile.parquet").select("user_id", "percentile", "rounded")
-  val user_animeDF = Helper.readParquet(spark, "user_anime.parquet")
+  val user_animeDF = Helper.readParquetSchema(spark, "user_anime.parquet",SchemaHelper.getUserAnimeSchema)
     .select("user_id", "score", "review_score", "review_num_useful", "review_id")
     .where(col("score").isNotNull or col("review_id").isNotNull)
 
@@ -56,16 +56,16 @@ object UserPercentile_UserAnime extends App {
       .agg(
         count("review_id").as("reviews_given"),
         count("score").as("scores_given"),
-        sum("review_num_useful").as("usefulReviews_given"),
+        (sum("review_num_useful")/count("review_id")).as("useful/total_reviews"),
         avg("score").as("average_score"),
         stddev("score").as("stddev_score"),
         avg("review_score").as("average_review_score"),
         stddev("review_score").as("stddev_review_score"))
       .orderBy(desc("percentile"))
 
-  /*
+
     percentilesDF.coalesce(1).write.format("csv")
       .option("header", "true")
       .mode(SaveMode.Overwrite).save("results/percentile.csv")
-  */
+
 }

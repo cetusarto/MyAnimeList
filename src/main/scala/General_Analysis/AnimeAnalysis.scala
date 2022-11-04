@@ -1,18 +1,16 @@
 package General_Analysis
 
 import org.apache.spark.sql.functions._
-import Helper.Helper
+import Helper._
 import org.apache.spark.sql.SaveMode
 
 object AnimeAnalysis extends App {
 
   val spark = Helper.getSparkSession("AnimeAnalysis")
-  val animeDF = Helper.readParquet(spark, "anime.parquet")
-    .select("anime_id", "source_type", "num_episodes", "status", "genres")
+  val animeDF = Helper.readParquetSchema(spark, "anime.parquet",SchemaHelper.getAnimeSchema)
+    .select("anime_id", "source_type", "status", "genres")
 
   val fullCount = animeDF.count()
-
-  animeDF //.show()
 
   //Anime status
   animeDF.groupBy("status")
@@ -30,8 +28,6 @@ object AnimeAnalysis extends App {
     .groupBy("genre").agg(count("*")
     .as("count")).orderBy(desc("count")).coalesce(1)
     .show()
-
-
 
   //genres.write.format("csv").mode(SaveMode.Overwrite).save("src/main/resources/data/genres.csv")
 

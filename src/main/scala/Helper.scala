@@ -42,13 +42,11 @@ object Helper {
       "path" -> s"src/main/resources/data/$file"
     )).load()
 
-  def readParquetWSchema(spark: SparkSession, file: String, schema: StructType) = spark.read
+  def readParquetSchema(spark: SparkSession, file: String, schema: StructType) = spark.read
     .schema(schema)
     .options(Map(
       "mode" -> "failFast",
       "header" -> "true",
       "path" -> s"src/main/resources/data/$file"
     )).load()
-
-
 }
