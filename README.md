@@ -337,7 +337,7 @@ Many more things can be done with this resource and much more value can be found
 
 ## 7 Conclusions ##
 The analysis made just scraped the surface of what this dataset offers. Based on the information generated the following conclusions could be stated:
-* Users with more anime watch time tend to give lower reviews, it can be due to them being more critical of what they watch as they are more experienced.
+* Users with more anime watch time tend to give lower reviews, it can be due to them being more critical of what they watch as they are more experienced or just lack of new and quality content lowering the average score.
 * Users with more anime watch time give more useful and valuable reviews to the community.
 * Action, Drama, Comedy and Shounen animes dominate the interactions and are the prefered genres of users.
 * Users tend to value more new animes than old ones.
