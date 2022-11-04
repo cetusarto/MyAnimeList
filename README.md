@@ -29,8 +29,8 @@ This project tries to answer the following main questions from the dataset:
 4. What are the most/least reviewed genres?
 5. What are the genres with most favorites?
 6. What scores and reviews do users leave according the anime's age?
-7. Why users want to leave reviews or scores?
-8. How are subreviews (i.e. story score) affected by the general review score?
+7. Why users decide to leave reviews?
+8. How are all the kinds of reviews correlated?
 
 ## Project parts ##
 The steps followed to achieve the final conclusions are divided in each of the following project parts. 
@@ -137,9 +137,33 @@ While the other 58% contains mainly completed interactions.
 |  on_hold|  1475165|1.1416223562944896|
 +---------+---------+------------------+
 ```
+We can also find the average and standard deviation of both the review_score and the score.
+
+```
++-----------------+------------------+-----------------+-----------------+
+|        avg_score|         std_score| avg_review_score| std_review_score|
++-----------------+------------------+-----------------+-----------------+
+|7.491251933150234|1.7448017790109245|7.287402726275657|2.348781735684145|
++-----------------+------------------+-----------------+-----------------+
+```
+
 With the previous analysis and the study of the dataset schema, the main questions are set and the Next Analysis is made.
 
+
 ### Next Analysis ###
+Next Analysis contains notebooks where different tables are joined in order to answer the main questions.
+Some notebooks follow a similar structure in order to get information from the data about how users review while being grouped by different attributes.
+Also, some notebooks write the resulting dataframe in a single csv file for easy visualization with PowerBI in order to answer the questions. 
+The following explains the notebooks in the Next_Analysis folder:
+1. Age and UserAnime: This notebook creates a new dataframe from the anime table with the year in which the anime was released and when it ended. This table is then joined with the main dataset, User_Anime, and grouped by the year.
+2. Genres and UserAnime: This notebook creates a new dataframe exploding the "genres" array of the Anime table and then joins it with User_Anime to be grouped by individual genre and getting insights on them.
+3. UserAnime: This notebook does two main analysis. The first one, gets the correlation between the different types of review and shows it in a dataframe. The next one, tries to find what makes a user to give a review instead of just a score. To do this, the dataframe joins itself to compare how the users write reviews.
+4. UserPercentile and UserAnime: This notebook assigns a percentile of the user spent time watching anime in order to group evenly and join them with the User_Anime dataframe and gather insights from it.
+
+## Question solving ##
+
+### What scores and reviews do users leave according their watch time? ###
+This questions 
 
 
 

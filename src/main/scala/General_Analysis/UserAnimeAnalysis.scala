@@ -16,14 +16,14 @@ object UserAnimeAnalysis extends App {
     .withColumn("has_score", col("score").isNotNull)
     .select("has_score")
     .groupBy("has_score").agg(count("*").as("count"))
-    .withColumn("percentage", col("count") / fullCount * 100)//.show()
+    .withColumn("percentage", col("count") / fullCount * 100) //.show()
 
   //Score status
   user_animeDF
     .where(col("score").isNotNull)
     .groupBy("status").agg(count("*").as("count"))
     .withColumn("percentage", col("count") / scoredCount * 100)
-    //.show()
+  //.show()
 
   // Non Scored status
   user_animeDF
@@ -31,6 +31,24 @@ object UserAnimeAnalysis extends App {
     .groupBy("status").agg(count("*").as("count"))
     .withColumn("percentage", col("count") / (fullCount - scoredCount) * 100)
     .show()
+
+  user_animeDF
+    .where(col("score").isNotNull or col("review_score").isNotNull)
+    .selectExpr(
+      "avg(score) as avg_score",
+      "std(score) as std_score",
+      "avg(review_score) as avg_review_score",
+      "std(review_score) as std_review_score",
+    ).show()
+
+  user_animeDF
+    .where(col("review_score").isNotNull)
+    .selectExpr(
+      "avg(score) as avg_score",
+      "std(score) as std_score",
+      "avg(review_score) as avg_review_score",
+      "std(review_score) as std_review_score"
+    ).show()
 
 
 }

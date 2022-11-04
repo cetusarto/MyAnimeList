@@ -13,9 +13,11 @@ object Age_UserAnime extends App {
     .where(col("score").isNotNull or col("review_id").isNotNull)
 
   val animeAgeDF = Helper.readParquet(spark, "anime.parquet")
-    .select("anime_id", "start_date")
+    .select("anime_id", "start_date","end_date")
     .withColumn("start_year", substring(col("start_date"), 1, 4))
+    .withColumn("end_year", substring(col("end_date"), 1, 4))
     .drop("start_date")
+    .drop("end_date")
 
   val age_animeDF = user_animeDF.join(animeAgeDF, "anime_id")
 
