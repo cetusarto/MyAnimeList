@@ -23,27 +23,31 @@ The only changed configuration is the reduction of shuffle partitions as there a
 
 ## Main Questions ##
 This project tries to answer the following main questions from the dataset:
-1. How does watch time affects user-anime interactions?
-2. How does genre affect user-anime interactions?
-3. How does age of the anime affect user-anime interactions?
-4. How does popularity of the anime affect user-anime interactions?
-5. What makes a user to leave a review?
+1. What scores and reviews do users leave according their watch time?
+2. What users give the most useful reviews according their anime watch time?
+3. What scores and reviews do the different genres have?
+4. What are the most/least reviewed genres?
+5. What are the genres with most favorites?
+6. What scores and reviews do users leave according the anime's age?
+7. Why users want to leave reviews or scores?
+8. How are subreviews (i.e. story score) affected by the general review score?
 
 ## Project parts ##
-The steps followed to achieve the final conclusions are divided in each of the following project parts
+The steps followed to achieve the final conclusions are divided in each of the following project parts. 
+The project is divided in a couple notebooks just to improve development speed and code readability, it is not optimized for performance as they repeat costly transformations like joins. 
 
 ### Helper object ###
-To avoid boilerplate the Helper object is built. It offers a series of methods for every class to use for the repetitive taks like the SparkSession builder and the reading of files.
+To avoid boilerplate the Helper object is built. It offers a series of methods for every notebook to use in the repetitive tasks like the SparkSession builder and the reading of files.
 
 ### Data Preparation ###
 This part contains two notebooks:
 1. Unifying Dataset: Takes the 70 raw csv files of user_anime schema and unifies them in a single parquet file for easier access in the next steps
-2. Cleansing Dataset: Deletes useless columns and saves them in a parquet file in order to optimize the reading process of each notebook.
+2. Cleansing Dataset: Deletes useless columns from each file and saves them in a parquet file in order to optimize the reading process of each notebook.
 
 ### General Analysis ###
 This part analyses the basic indicators of every data table:
 1. Anime: This notebook gives the following conclusions:
-- The majority of the anime has finished airing
+- The great majority of the anime has finished airing
 ```
 +----------------+-----+-----------------+
 |          status|count|       percentage|
@@ -53,7 +57,7 @@ This part analyses the basic indicators of every data table:
 |   Not yet aired|  366|2.735630465655131|
 +----------------+-----+-----------------+
 ```
-- The most important sources are Original and manga
+- The most important sources are original and manga 
 ```
 +------------+-----+-------------------+
 | source_type|count|         percentage|
@@ -74,7 +78,7 @@ This part analyses the basic indicators of every data table:
 | Mixed media|   19| 0.1420136034083265|
 +------------+-----+-------------------+
 ```
-- The count of anime of each genre (44 genres in total that can be seen in the results folder) 
+- The count the main genres (44 in total)
 ```
 +-------------+-----+
 |        genre|count|
@@ -100,7 +104,7 @@ This part analyses the basic indicators of every data table:
 |    max|              10.0|             18659|             11014|          105338.6|
 +-------+------------------+------------------+------------------+------------------+
 ```
-It shows big differences in the latter attributes, where the standard  deviation shows how dispersed the behavior of the users is.
+It shows big differences in the latter attributes, where the standard  deviation confirms how dispersed the behavior of the users is.
 3. UserAnime: With this notebook it is found that nearly half of the interactions do not have scores.  
 ```
 +---------+---------+------------------+
@@ -110,7 +114,7 @@ It shows big differences in the latter attributes, where the standard  deviation
 |     true|129216548| 57.73425621131435|
 +---------+---------+------------------+
 ```
-It is shown that besides the application not letting users score without having watched the anime, a big group of users that have completed it, simply do not leave their score. 
+For the 42% (interactions without score) it is shown that besides the application not letting users score without having watched the anime, a big group of users that have completed it, simply do not leave their score. 
 ```
 +-------------+--------+------------------+
 |       status|   count|        percentage|
@@ -133,7 +137,7 @@ While the other 58% contains mainly completed interactions.
 |  on_hold|  1475165|1.1416223562944896|
 +---------+---------+------------------+
 ```
-With the previous analysis and knowledge of the dataset, the main questions are set and the Next Analysis is made.
+With the previous analysis and the study of the dataset schema, the main questions are set and the Next Analysis is made.
 
 ### Next Analysis ###
 

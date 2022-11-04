@@ -24,6 +24,15 @@ object Helper {
     "path" -> s"src/main/resources/data/$file"
   )).load()
 
+  def readResult(spark: SparkSession, file: String) = spark.read
+    .format("csv").options(Map(
+    "mode" -> "failFast",
+    "inferSchema" -> "true",
+    "sep" -> "\t",
+    "header" -> "true",
+    "path" -> s"results/$file"
+  )).load()
+
 
   def readParquet(spark: SparkSession, file: String) = spark.read
     .options(Map(
