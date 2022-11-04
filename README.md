@@ -264,7 +264,7 @@ This questions tries to support the previous statement as we can se how they are
 This question tries to answer if age has an effect on an anime's review and score.
 The graph shows no particular preferences on the reviews but a clear preference on modern anime with the average score.  
 
-![img.png](img/Start Year.png)
+![img.png](img/Start%20Year.png)
 
 The age of an Anime does not seem to effect on how it is reviewed but it does in how it es scored, showing tendency to prefer modern content.
 
@@ -292,7 +292,8 @@ characters).
 In order to solve this, the UserAnime notebooks applies the correlation function between all the combinations giving the
 following result:
 
-```+--------------------+--------------------+------------------+
+```
++--------------------+--------------------+------------------+
 |             ReviewA|             ReviewB|       Correlation|
 +--------------------+--------------------+------------------+
 |        review_score|               score| 0.936381896052212|
@@ -331,6 +332,16 @@ rest of rest of the aspects. Another one could be how the enjoyment of an anime 
 The general analysis of this dataset can achieve interesting
 conclusions, however this dataset offers much more value which could
 lead to stronger user understanding, anime recommendations and ML training.
-Each of the showed parameters could be more thoroughly grouped and getting more specific insights from each group.
+Each of the showed parameters could be more thoroughly grouped and getting more specific insights from each group. Some of the genres could be cropped and just keep the important ones. 
+Many more things can be done with this resource and much more value can be found.
 
 ## 7 Conclusions ##
+The analysis made just scraped the surface of what this dataset offers. Based on the information generated the following conclusions could be stated:
+* Users with more anime watch time tend to give lower reviews, it can be due to them being more critical of what they watch as they are more experienced.
+* Users with more anime watch time give more useful and valuable reviews to the community.
+* Action, Drama, Comedy and Shounen animes dominate the interactions and are the prefered genres of users.
+* Users tend to value more new animes than old ones.
+* Average score and review_score are not great measures to describe genre favoritism on the platform.
+* Users tend to give slightly worse scores when they submit a review.
+* Users enjoy animes more when they like the characters and stories.
+* Users do not take strongly into account sound and animation in the general score.
