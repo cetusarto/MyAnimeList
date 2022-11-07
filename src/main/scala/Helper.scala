@@ -11,7 +11,7 @@ object Helper {
 
   def getSparkSession(app_name: String = "App"): SparkSession = SparkSession.builder()
     .appName(app_name)
-    .config("spark.master", "local")
+    .config("spark.master", "local[*]")
     .config("spark.sql.shuffle.partitions", "5")
     .getOrCreate()
 
@@ -28,9 +28,9 @@ object Helper {
     .format("csv").options(Map(
     "mode" -> "failFast",
     "inferSchema" -> "true",
-    "sep" -> "\t",
+    "sep" -> ",",
     "header" -> "true",
-    "path" -> s"results/$file"
+    "path" -> file
   )).load()
 
 

@@ -22,7 +22,7 @@ object SchemaHelper {
   ))
 
   def getAnimeSchema = StructType(Array(
-    StructField("anime_id", StringType),
+    StructField("anime_id", IntegerType),
     StructField("type", StringType),
     StructField("source_type", StringType),
     StructField("status", StringType),
@@ -35,7 +35,7 @@ object SchemaHelper {
   def getUserAnimeSchema =
     StructType(Array(
       StructField("user_id", StringType),
-      StructField("anime_id", StringType),
+      StructField("anime_id", IntegerType),
       StructField("favorite", IntegerType),
       StructField("review_id", IntegerType),
       StructField("review_date", StringType),
