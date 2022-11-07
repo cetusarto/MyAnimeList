@@ -15,6 +15,9 @@ This dataset contains:
 * 5,048,994 interactions between user pairs (friendship)
 * 223,812,614 interactions between users and animes
 
+
+![title](img/unnamed.png)
+
 The different tables are stored in individual csv files except the User_Anime, which is separated in 70 individual csv
 files. The tables used in this analysis were:
 
@@ -46,7 +49,6 @@ will be seen later), and almost all values posses null in all their review score
 review or a score.
 Some normalization of the schema might improve their storage and ease up some problems.
 
-![title](img/unnamed.png)
 
 The main focus of this study is the interactions between users and animes focusing in the ways they choose to rate the
 animes and how the different attributes of both users and animes affect this rating.
