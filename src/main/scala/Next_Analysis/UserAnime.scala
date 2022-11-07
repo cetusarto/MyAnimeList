@@ -7,25 +7,25 @@ import org.apache.spark.sql.functions._
 object UserAnime extends App {
   val spark = Helper.getSparkSession("UserAnime")
 
-  val userAnimeDF = Helper.readParquetSchema(spark, "user_anime.parquet",SchemaHelper.getUserAnimeSchema)
+  val userAnimeDF = Helper.readParquetSchema(spark, "user_anime.parquet", SchemaHelper.getUserAnimeSchema)
 
   /**
    * Correlation analysis
    */
-//    val userAnimeReviewsDF = userAnimeDF
-//      .select("score", "review_score", "review_story_score",
-//        "review_animation_score", "review_sound_score", "review_character_score", "review_enjoyment_score", "review_id")
-//      .where(col("review_id").isNotNull)
-//
-//    val subReviews = Array("review_score", "score","review_story_score", "review_animation_score", "review_sound_score", "review_character_score", "review_enjoyment_score")
-//    val correlations = for {i <- 0 to 6; j <- i to 6 if i != j} yield (subReviews(i) , subReviews(j) , userAnimeReviewsDF.stat.corr(subReviews(i), subReviews(j)))
-//    import spark.implicits._
-//    correlations.toDF("ReviewA","ReviewB","Correlation").orderBy(desc("Correlation")).show(30)
+  //    val userAnimeReviewsDF = userAnimeDF
+  //      .select("score", "review_score", "review_story_score",
+  //        "review_animation_score", "review_sound_score", "review_character_score", "review_enjoyment_score", "review_id")
+  //      .where(col("review_id").isNotNull)
+  //
+  //    val subReviews = Array("review_score", "score","review_story_score", "review_animation_score", "review_sound_score", "review_character_score", "review_enjoyment_score")
+  //    val correlations = for {i <- 0 to 6; j <- i to 6 if i != j} yield (subReviews(i) , subReviews(j) , userAnimeReviewsDF.stat.corr(subReviews(i), subReviews(j)))
+  //    import spark.implicits._
+  //    correlations.toDF("ReviewA","ReviewB","Correlation").orderBy(desc("Correlation")).show(30)
 
-/**
+  /**
    * Why users want to leave reviews?
    */
-//
+  //
   val userAnime2DF = userAnimeDF
     .select("user_id", "score", "review_score", "review_id")
     .where(col("score").isNotNull or col("review_id").isNotNull)
@@ -36,7 +36,6 @@ object UserAnime extends App {
       .where(col("hasReview"))
       .groupBy("user_id")
       .agg(
-        count("*").as("count_reviews"),
         avg("score").as("average_score_WReview"))
 
   val withoutReviewDF =
@@ -46,7 +45,7 @@ object UserAnime extends App {
       .agg(
         avg("score").as("average_score"))
 
-  withoutReviewDF.join(withReviewDF, "user_id").where("count_reviews > 1")
+  withoutReviewDF.join(withReviewDF, "user_id")
     .selectExpr("user_id",
       "(average_score_WReview - average_score) as B",
       "(average_score_WReview) as C",

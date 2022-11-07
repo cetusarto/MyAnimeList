@@ -70,8 +70,8 @@ object OutliersAnalysis extends App {
   val userReviewDF = userWScoresDF
     .withColumn("mean", avg("count").over())
     .withColumn("stddev", stddev("count").over())
-    .withColumn("UpperLimit", col("mean") + col("stddev") * 3)
-    .withColumn("LowerLimit", col("mean") - col("stddev") * 3).drop("mean", "stddev")
+    .withColumn("UpperLimit", col("mean") + col("stddev") * 6)
+    .withColumn("LowerLimit", col("mean") - col("stddev") * 6).drop("mean", "stddev")
     .withColumn("outlier", detectOutlier(col("count"), col("UpperLimit"), col("LowerLimit")))
 
   userReviewDF.groupBy("outlier").agg(count("*")).show()

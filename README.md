@@ -16,12 +16,40 @@ This dataset contains:
 * 223,812,614 interactions between users and animes
 
 The different tables are stored in individual csv files except the User_Anime, which is separated in 70 individual csv
-files.
-The main focus of this study is the interactions between users and animes focusing in the ways they choose to rate the
-animes and how the different attributes of both users and animes affect this rating.
+files. The tables used in this analysis were:
+
+1. User: Contains information from the user. The mainly used attributes used are:
+    1. user_id: String of characters of the user's nickname.
+    2. num_days: Float of the number of days spent watching anime, useful to express a user's experience.
+2. Anime: Contains information from the anime show itself. The mainly used attributes used are:
+    1. anime_id: Integer of characters of the anime's id.
+    2. start_date and end_date: Both timestamps of start and end date of the anime (The timestamp type is not really
+       used as it only stores their date)
+    3. genres: Array of strings holding their multiple genres
+3. User_Anime: Contains information from the interactions between a user and an anime. Users can interact with an anime
+   without giving a score. Users who give a score can do it without giving a review. The mainly used attributes used
+   are:
+    1. user_id and anime_id: Identifies their respective user an anime with the type above.
+    2. favorite: Value of 1 if the user sets that anime as their favorite, 0 if not.
+    3. score: Value from 1 to 10 rating the anime.
+    4. review_id: If not null, it shows a review was made.
+    5. review scores (review_score, review_story_score, review_enjoyment_score, etc..): Rates different aspects from the
+       anime from 1 to 10. A user has to rate them all if he chooses to leave a review.
+    6. status: Has the user "completed", "watching", "plantowatch", "dropped", "on_hold" the anime.
+
+The dataset schema shows a very poorly normalized schema. Many of the attributes used in their tables were redundant,
+for example, in the Anime table there is an attribute for each possible score (1 to 10), counting the total users who
+have scored that number.
+Another example is how in the User table there are counts of the different anime status which they have interacted with.
+The is also how there is not a separate table for reviews only, as they are less than 0.1% of all interactions (as it
+will be seen later), and almost all values posses null in all their review scores as it is not mandatory to leave a
+review or a score.
+Some normalization of the schema might improve their storage and ease up some problems.
 
 ![title](img/unnamed.png)
 
+The main focus of this study is the interactions between users and animes focusing in the ways they choose to rate the
+animes and how the different attributes of both users and animes affect this rating.
 The overview of the dataset can be found ond
 the [Kaggle Dataset](https://www.kaggle.com/datasets/svanoo/myanimelist-dataset). This project uses version 2 of the
 dataset.
@@ -77,6 +105,24 @@ This part contains two notebooks:
    easier access in the next steps.
 2. Cleansing Dataset: Drops useless columns from each file and saves them in a parquet file in order to optimize the
    reading process of each notebook.
+3. Outliers Analysis: Analyses outliers from the main variables which are going to be used in the analysis checking 3
+   Standard deviations and then 6 from the mean, and it checks the quantity of reviews from each group. It results in
+   the following information by group:
+    1. By anime: It presents outliers, which do not seem to cause big changes as they are not outliers at 6 SDs.
+    2. By genre: It does not present outliers.
+    3. By user: It still presents outliers after 6 SDs (a total of 2930), which represents nearly 0.3% of the total
+       users.
+    4. By user watch time: It does not present outliers afer 6 SDs
+4. Data Integrity: Analyses the integrity of some data:
+    1. Check reviews integrity: Checks if all interactions with reviews contain all the different types of sub-reviews.
+       100% of all the reviews had all sub-reviews.
+    2. Animes With no Scores: 395 anime have not been reviewed or scored.
+    3. Null count: The 3 tables are analysed:
+        1. User: No null values
+        2. Anime: Some null values on start and end date (181 and 580).
+        3. User Anime: Correct amount of null values (review_id null when there is no review, null score when there is
+           no review, etc...)
+        4. User Anime Date Check: All review_date values are correct (parseable and in a possible time frame)
 
 ### 4.3 General Analysis ###
 
@@ -202,38 +248,54 @@ answer the questions.
 The following explains the notebooks in the Next_Analysis folder:
 
 1. Age and UserAnime: This notebook creates a new dataframe from the anime table with the year in which the anime was
-   released and when it ended. This table is then joined with the main dataset, User_Anime, and grouped by the year.
+   released and when it ended. This table is then joined with the main dataset, User_Anime, and grouped by the year. The
+   main dataset is grouped by anime_id to ease up the following join:
+   ![img.png](img/Age%20UserAnime.png)
 2. Genres and UserAnime: This notebook creates a new dataframe exploding the "genres" array of the Anime table and then
-   joins it with User_Anime to be grouped by individual genre and getting insights on them.
+   joins it with User_Anime to be grouped by individual genre and getting insights on them. As showed above, it is also
+   grouped by anime_id performing the following join:
+   ![img.png](img/Genre%20UserAnime.png)
 3. UserAnime: This notebook does two main analysis. The first one, gets the correlation between the different types of
    review and shows it in a dataframe. The next one, tries to find what makes a user to give a review instead of just a
-   score. To do this, the dataframe joins itself to compare how the users write reviews.
+   score. To do this, the dataframe joins itself to compare how the users write reviews. The join is showed below:
+   ![img.png](img/User%20User.png)
+
 4. UserPercentile and UserAnime: This notebook assigns a percentile of the user spent time watching anime in order to
-   group evenly and join them with the User_Anime dataframe and gather insights from it.
+   group evenly and join them with the User_Anime dataframe and gather insights from it. The User Anime table is also
+   grouped by user_id to facilitate the join:
+   ![img.png](img/percentile%20UserAnime.png)
 
 ## 5 Question solving ##
+
 The results are written in a csv file which is graphed in Power BI for readability
 
 ### 5.1 What scores and reviews do users leave according their watch time? ###
+
 This question tries to answer how "veteran" anime users tend to rate the content.
-In order to have a better distribution and easier analysis and, as mentioned above, grouping by percentile we get the following results. 
+In order to have a better distribution and easier analysis and, as mentioned above, grouping by percentile we get the
+following results.
 
 ![img.png](img/Percentile.png)
 
-Graphing helps to see how both the review_score and score average tend to go down with more watch-time. This can be due to users being more critical of what they watch or just consuming
-content with less quality. 
+Graphing helps to see how both the review_score and score average tend to go down with more watch-time. This can be due
+to users being more critical of what they watch or just consuming
+content with less quality.
 
 ### 5.2 What users get the most useful reviews according their anime watch time? ###
-This question tries to answer what level of user "seniority" give the valuable reviews. 
-In order to get a more objective analysis, useful reviews is divided by the total reviews users have submitted and it is shown in the following graph.
+
+This question tries to answer what level of user "seniority" give the valuable reviews.
+In order to get a more objective analysis, useful reviews is divided by the total reviews users have submitted and it is
+shown in the following graph.
 
 ![img.png](img/PercentileUseful.png)
 
 The graph clearly shows how much more useful are the reviews given by their "seniority", as it continuously increases.
 
 ### 5.3 What scores and reviews do the different genres have? ###
+
 This question tries to find the best and worst reviewed and scored animes.
-This first graph shows how Award Winning and Military animes have the best ratings with moderate to low standard deviation.
+This first graph shows how Award Winning and Military animes have the best ratings with moderate to low standard
+deviation.
 
 ![img.png](img/average_score%20by%20genre.png)
 
@@ -241,37 +303,45 @@ The second graph, shows an even higher rating for Award Winning animes and the l
 
 ![img.png](img/Average_review%20by%20genre.png)
 
-Both of these graphs can be biased, as it was seen in the General Analysis, none of this genres were in the top count of anime genres. 
+Both of these graphs can be biased, as it was seen in the General Analysis, none of this genres were in the top count of
+anime genres.
 
 ### 5.4 What are the most/least reviewed genres? ###
+
 Based on the previous question we go further analysing how many reviews and scores are given by genre.
-It clearly shows the strong superiority of interactions with the Comedy and Action genres 
+It clearly shows the strong superiority of interactions with the Comedy and Action genres
 
 ![img.png](img/reviews_given%20by%20genre.png)
 
 ![img.png](img/scores_given%20by%20genre.png)
 
-Going back to the previous question it can also be seen how the reviews and scores of the top genres are sit in the middle. 
+Going back to the previous question it can also be seen how the reviews and scores of the top genres are sit in the
+middle.
 This positions this genres as the strongest and favorites of the users.
 
 ### 5.5 What are the genres with most favorites? ###
-This questions tries to support the previous statement as we can se how they are the genres with most favorites voted on all the platform.
+
+This questions tries to support the previous statement as we can se how they are the genres with most favorites voted on
+all the platform.
 
 ![img.png](img/Favorites%20by%20genre.png)
 
-
 ### 5.6 What scores and reviews do users leave according the anime's age? ###
+
 This question tries to answer if age has an effect on an anime's review and score.
-The graph shows no particular preferences on the reviews but a clear preference on modern anime with the average score.  
+The graph shows no particular preferences on the reviews but a clear preference on modern anime with the average score.
 
 ![img.png](img/Start%20Year.png)
 
-The age of an Anime does not seem to effect on how it is reviewed but it does in how it es scored, showing tendency to prefer modern content.
-
+The age of an Anime does not seem to effect on how it is reviewed but it does in how it es scored, showing tendency to
+prefer modern content.
 
 ### 5.7 Why users decide to leave reviews? ###
 
-This questions focuses on finding what can be the reason for users to want to leave a review, given that the main interaction is just setting a score. To do this the average review_score and score are computed and then compared with the average score when the user does not review.
+This questions focuses on finding what can be the reason for users to want to leave a review, given that the main
+interaction is just setting a score. To do this the average review_score and score are computed and then compared with
+the average score when the user does not review.
+
 ```
 +-----------------+-----------------+------------------------------------------+------------------------------------------+
 |   average_score |  AvgScoreWReview|AVG(average_score_WReview - average_score)|STD(average_score_WReview - average_score)|
@@ -279,9 +349,10 @@ This questions focuses on finding what can be the reason for users to want to le
 |7.476541122294622|7.320495958899991|                      -0.15604516339462182|                        1.6220288234143447|
 +-----------------+-----------------+------------------------------------------+------------------------------------------+
 ```
+
 There is no significant difference at plain significant difference,
-but that small difference with the standard deviation shows 
-how the average score contains a slightly higher average and 
+but that small difference with the standard deviation shows
+how the average score contains a slightly higher average and
 than the one given in the reviews. Indicating that users tend to leave worse scores when
 they're reviewing which could tell they prefer to rate worse when they are setting a review.
 
@@ -325,19 +396,25 @@ It's worth noting how the review and score have the stronger correlation but als
 animation and sound
 are too, as it is that the score and review score posses the lowest correlation with both animation and sound. A
 plausible conclusion could be how the animation and sound are tightly bounded and aisled from the
-rest of rest of the aspects. Another one could be how the enjoyment of an anime relates strongly with the character and story development.
+rest of rest of the aspects. Another one could be how the enjoyment of an anime relates strongly with the character and
+story development.
 
 ## 6 Future implementations ##
 
 The general analysis of this dataset can achieve interesting
 conclusions, however this dataset offers much more value which could
 lead to stronger user understanding, anime recommendations and ML training.
-Each of the showed parameters could be more thoroughly grouped and getting more specific insights from each group. Some of the genres could be cropped and just keep the important ones. 
+Each of the showed parameters could be more thoroughly grouped and getting more specific insights from each group. Some
+of the genres could be cropped and just keep the important ones.
 Many more things can be done with this resource and much more value can be found.
 
 ## 7 Conclusions ##
-The analysis made just scraped the surface of what this dataset offers. Based on the information generated the following conclusions could be stated:
-* Users with more anime watch time tend to give lower reviews, it can be due to them being more critical of what they watch as they are more experienced or just lack of new and quality content lowering the average score.
+
+The analysis made just scraped the surface of what this dataset offers. Based on the information generated the following
+conclusions could be stated:
+
+* Users with more anime watch time tend to give lower reviews, it can be due to them being more critical of what they
+  watch as they are more experienced or just lack of new and quality content lowering the average score.
 * Users with more anime watch time give more useful and valuable reviews to the community.
 * Action, Drama, Comedy and Shounen animes dominate the interactions and are the prefered genres of users.
 * Users tend to value more new animes than old ones.

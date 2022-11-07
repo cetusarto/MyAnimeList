@@ -6,10 +6,6 @@ import org.apache.spark.sql.catalyst.dsl.expressions.StringToAttributeConversion
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
 
-/**
- * Uses Spark SQL functions to get rid of all interactions without review and saves it in a parquet file
- * */
-
 object DataIntegrity extends App {
 
   val spark = Helper.getSparkSession()
@@ -49,27 +45,27 @@ object DataIntegrity extends App {
    * Check reviews integrity (if there are nulls in any of the sub-reviews scores like enjoyement)
    */
 
-  //  user_AnimeDF
-  //    .where(col("review_id").isNotNull).agg(
-  //    count("review_score"), count("review_story_score"), count("review_animation_score"), count("review_sound_score"),
-  //    count("review_character_score"), count("review_enjoyment_score")).show()
-  //  println("Check reviews integrity (if there are nulls in any of the sub-reviews scores like enjoyement)")
-  //
+    user_AnimeDF
+      .where(col("review_id").isNotNull).agg(
+      count("review_score"), count("review_story_score"), count("review_animation_score"), count("review_sound_score"),
+      count("review_character_score"), count("review_enjoyment_score")).show()
+    println("Check reviews integrity (if there are nulls in any of the sub-reviews scores like enjoyement)")
+
 
   /**
    * Count Of Animes with no scores
    */
-  //  val animeNoReviews = animeIdsDF.join(animeWScoresDF
-  //    , animeIdsDF.col("id") === animeWScoresDF.col("anime_id"), "left_anti") //
-  //  animeNoReviews.agg(count("*")).show()
+    val animeNoReviews = animeIdsDF.join(animeWScoresDF
+      , animeIdsDF.col("id") === animeWScoresDF.col("anime_id"), "left_anti") //
+    animeNoReviews.agg(count("*")).show()
 
   /**
    * Null count
    */
-  //  userDF.select(countCols(userDF.columns): _*).show()
-  //  animeDF.select(countCols(animeDF.columns): _*).show()
-  //  user_AnimeDF.select(countCols(user_AnimeDF.columns): _*).show()
-  //  println("Null count")
+    userDF.select(countCols(userDF.columns): _*).show()
+    animeDF.select(countCols(animeDF.columns): _*).show()
+    user_AnimeDF.select(countCols(user_AnimeDF.columns): _*).show()
+    println("Null count")
 
   /**
    * User_review date check

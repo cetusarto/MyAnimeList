@@ -11,6 +11,9 @@ object Age_UserAnime extends App {
   val user_animeDF = Helper.readParquetSchema(spark, "user_anime.parquet",SchemaHelper.getUserAnimeSchema)
     .select("anime_id", "favorite", "review_score", "score", "review_id", "review_num_useful")
     .where(col("score").isNotNull or col("review_id").isNotNull)
+    .groupBy("anime_id")
+    .agg(sum("favorite").as("favorite"),sum("score").as("score"),
+      sum("review_score").as("review_score"),sum("review_num_useful").as("review_num_useful"))
 
   val animeAgeDF = Helper.readParquetSchema(spark, "anime.parquet",SchemaHelper.getAnimeSchema)
     .select("anime_id", "start_date","end_date")
@@ -29,7 +32,7 @@ object Age_UserAnime extends App {
         stddev("score").as("stddev_score"),
         avg("review_score").as("average_review_score"),
         stddev("review_score").as("stddev_review_score"),
-        count("review_id").as("reviews_given"),
+        count("review_score").as("reviews_given"),
         count("score").as("scores_given"),
         sum("review_num_useful").as("usefulReviews_given")
       )

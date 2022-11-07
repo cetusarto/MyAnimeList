@@ -45,6 +45,9 @@ object UserPercentile_UserAnime extends App {
   val user_animeDF = Helper.readParquetSchema(spark, "user_anime.parquet",SchemaHelper.getUserAnimeSchema)
     .select("user_id", "score", "review_score", "review_num_useful", "review_id")
     .where(col("score").isNotNull or col("review_id").isNotNull)
+    .groupBy("user_id")
+    .agg(sum("score").as("score"),
+      sum("review_score").as("review_score"), sum("review_num_useful").as("review_num_useful"))
 
 
   val mainDF = user_animeDF.join(userPercentileDF, "user_id").drop("user_id")
@@ -56,7 +59,7 @@ object UserPercentile_UserAnime extends App {
       .agg(
         count("review_id").as("reviews_given"),
         count("score").as("scores_given"),
-        (sum("review_num_useful")/count("review_id")).as("useful/total_reviews"),
+        (sum("review_num_useful")/count("review_score")).as("useful/total_reviews"),
         avg("score").as("average_score"),
         stddev("score").as("stddev_score"),
         avg("review_score").as("average_review_score"),
