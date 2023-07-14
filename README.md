@@ -2,7 +2,7 @@
 
 This is a learning project for a Big Data with Scala Spark course. It's objective is to apply an EDA (Exploratory Data
 Analysis) on a dataset of free choice in order to demonstrate domain of the aforementioned tools while detecting
-outliers, cleaning the data and summarize the main characteristics of the data set.
+outliers, cleaning the data and summarize the main characteristics of the data set. 
 
 ## 1. Dataset Description ##
 
